@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+
+<input>
+    <pythonConfig>
+	    <localPythonCommand>python</localPythonCommand> <!--e.g. python3 -->
+	    <gridPythonPath>/users/USER/anaconda3/envs/ENVIRO_NAME/bin/python</gridPythonPath>
+      <slurmPythonPathMaster>/home/USER/.conda/envs/ENVIRO_NAME/bin/python</slurmPythonPathMaster>
+      <slurmPythonPathWorker>/home/USER/.conda/envs/ENVIRO_NAME/bin/python</slurmPythonPathWorker>
+    </pythonConfig>
+    <dbConfig>
+        <server>128.61.2.170</server> <!-- emade-server Networking settings, ClientIPAddress_2022-10-31_15-48-40 -->
+        <username>Lyim</username>
+        <password>ps7MA5dBcLegTiTN</password>
+        <database>scoliosis</database> <!-- need to make a database titled scoliosis for the data to be populated into -->
+        <reuse>0</reuse> <!-- set if you want to reuse the data -->
+    </dbConfig>
+    <datasets>
+        <dataset>
+            <name>FullDataSet</name>
+            <type>featuredata</type>
+            <MonteCarlo>
+                <trial>
+                    <trainFilename>datasets/titanic/train_0.csv.gz</trainFilename>
+                    <testFilename>datasets/titanic/test_0.csv.gz</testFilename>
+                </trial>
+                <trial>
+                    <trainFilename>datasets/titanic/train_1.csv.gz</trainFilename>
+                    <testFilename>datasets/titanic/test_1.csv.gz</testFilename>
+                </trial>
+                <trial>
+                    <trainFilename>datasets/titanic/train_2.csv.gz</trainFilename>
+                    <testFilename>datasets/titanic/test_2.csv.gz</testFilename>
+                </trial>
+                <trial>
+                    <trainFilename>datasets/titanic/train_3.csv.gz</trainFilename>
+                    <testFilename>datasets/titanic/test_3.csv.gz</testFilename>
+                </trial>
+                <trial>
+                    <trainFilename>datasets/titanic/train_4.csv.gz</trainFilename>
+                    <testFilename>datasets/titanic/test_4.csv.gz</testFilename>
+                </trial>
+            </MonteCarlo>
+        </dataset>
+    </datasets>
+
+    <objectives>
+        <objective>
+            <name>False Positives</name>
+            <weight>-1.0</weight>
+            <achievable>300</achievable>
+            <goal>0</goal>
+            <evaluationFunction>false_positive</evaluationFunction>
+            <lower>0</lower>
+            <upper>300</upper>
+        </objective>
+        <objective>
+            <name>False Negatives</name>
+            <weight>-1.0</weight>
+            <achievable>300</achievable>
+            <goal>0</goal>
+            <evaluationFunction>false_negative</evaluationFunction>
+            <lower>0</lower>
+            <upper>300</upper>
+        </objective>
+
+        <!--<objective>
+            <name>Length</name>
+            <weight>-1.0</weight>
+            <achievable>10.0</achievable>
+            <goal>0</goal>
+            <evaluationFunction>depth_breadth_eval_function</evaluationFunction>
+        </objective>-->
+
+        <objective>
+            <name>Num Elements</name>
+            <weight>-1.0</weight>
+            <achievable>100.0</achievable>
+            <goal>0</goal>
+            <evaluationFunction>num_elements_eval_function</evaluationFunction>
+            <lower>10</lower>
+            <upper>100</upper>
+        </objective>
+
+    </objectives>
+
+    <evaluation>
+        <module>evalFunctions</module>
+        <memoryLimit>30</memoryLimit> <!-- In Percent,  -->
+    </evaluation>
+    <localRunParameters>
+        <workersPerHost>5</workersPerHost>
+    </localRunParameters>
+    <slurmEngineParameters>
+        <numHosts>3</numHosts>
+        <workersPerHost>3</workersPerHost> 
+	      <jobName>emade.scoliosis</jobName> <!-- changed to scoliosis -->
+	      <runtime></runtime> <!--Optional runtime in D-HH:MM -->
+	      <modules>python/3.6.1 anaconda3/4.4.0 cuda/9</modules> <!--space delimited list of module names -->
+        <otherHardwareRequestString></otherHardwareRequestString> <!--e.g request specific GPU-->
+	      <memoryToAlloc>8</memoryToAlloc> <!--mem-per-cpu in GB-->
+        <specificNode></specificNode>
+        <anacondaEnvironmentMaster>ten</anacondaEnvironmentMaster>
+        <anacondaEnvironmentWorker>cpu</anacondaEnvironmentWorker>
+        <numberOfGPUs>1</numberOfGPUs>
+    </slurmEngineParameters>
+    <gridEngineParameters>
+        <numHosts>15</numHosts>
+        <workersPerHost>3</workersPerHost> <!-- changed to 3 due to running on laptop -->
+        <project>EOSL</project>
+        <queue>all.q</queue>
+        <parallelEnv>gtmoep</parallelEnv>
+    </gridEngineParameters>
+
+    <evolutionParameters>
+        <initialPopulationSize>512</initialPopulationSize>
+        <elitePoolSize>512</elitePoolSize>
+        <launchSize>300</launchSize>
+	      <minQueueSize>200</minQueueSize>
+        <outlierPenalty>0.2</outlierPenalty>
+
+        <!-- did not change yet -->
+        <matings>
+            <mating>
+                <name>crossover</name>
+                <probability>0.50</probability>
+            </mating>
+            <mating>
+                <name>crossoverEphemeral</name>
+                <probability>0.50</probability>
+            </mating>
+            <mating>
+                <name>headlessChicken</name>
+                <probability>0.10</probability>
+            </mating>
+            <mating>
+                <name>headlessChickenEphemeral</name>
+                <probability>0.10</probability>
+            </mating>
+        </matings>
+
+        <!-- did not change yet -->
+        <mutations> 
+            <mutation>
+                <name>insert</name>
+                <probability>0.05</probability>
+            </mutation>
+            <mutation>
+                <name>insert modify</name>
+                <probability>0.10</probability>
+            </mutation>
+            <mutation>
+                <name>ephemeral</name>
+                <probability>0.25</probability>
+            </mutation>
+            <mutation>
+                <name>node replace</name>
+                <probability>0.05</probability>
+            </mutation>
+            <mutation>
+                <name>uniform</name>
+                <probability>0.05</probability>
+            </mutation>
+            <mutation>
+                <name>shrink</name>
+                <probability>0.05</probability>
+            </mutation>
+        </mutations>
+
+        <selections>
+            <selection>
+                <name>sel_nsga2</name> <!-- change to selection algorithm we are using -->
+            </selection>
+    </selections>
+
+    </evolutionParameters>
+	<seedFile>
+		<!-- <filename>saved_runs/terminated_may_1/lastParents.txt</filename> -->
+		<!-- <filename>testCode/pickledTrees.dat</filename> -->
+	</seedFile>
+
+    <genePoolFitness>
+        <prefix>genePoolFitnessScoliosis</prefix> <!-- changed to Scoliosis -->
+    </genePoolFitness>
+    <paretoFitness>
+        <prefix>paretoFitnessScoliosis</prefix> <!-- changed to Scoliosis -->
+    </paretoFitness>
+    <parentsOutput>
+        <prefix>parentsScoliosis</prefix> <!-- changed to Scoliosis -->
+    </parentsOutput>
+
+
+
+    <paretoOutput>
+        <prefix>paretoFrontScoliosis</prefix>
+    </paretoOutput>
+</input>
