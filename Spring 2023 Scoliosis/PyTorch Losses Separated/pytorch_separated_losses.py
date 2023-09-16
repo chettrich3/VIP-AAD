@@ -1,0 +1,51 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+counting_df = pd.read_csv("counting_ten.txt", header=None, names=["count"])
+
+x_values = counting_df["count"].to_numpy()
+
+pytorch_wh_train_loss_df = pd.read_csv("wh_train.txt", header=None, names=["training losses"])
+pytorch_wh_train_y = pytorch_wh_train_loss_df["training losses"].to_numpy()
+
+pytorch_wh_val_loss_df = pd.read_csv("wh_val.txt", header=None, names=["validation losses"])
+pytorch_wh_val_y = pytorch_wh_val_loss_df["validation losses"].to_numpy()
+
+pytorch_hm_train_loss_df = pd.read_csv("hm_train.txt", header=None, names=["training losses"])
+pytorch_hm_train_y = pytorch_hm_train_loss_df["training losses"].to_numpy()
+
+pytorch_hm_val_loss_df = pd.read_csv("hm_val.txt", header=None, names=["validation losses"])
+pytorch_hm_val_y = pytorch_hm_val_loss_df["validation losses"].to_numpy()
+
+pytorch_reg_train_loss_df = pd.read_csv("reg_train.txt", header=None, names=["training losses"])
+pytorch_reg_train_y = pytorch_wh_train_loss_df["training losses"].to_numpy()
+
+pytorch_reg_val_loss_df = pd.read_csv("reg_val.txt", header=None, names=["validation losses"])
+pytorch_reg_val_y = pytorch_reg_val_loss_df["validation losses"].to_numpy()
+
+fig, ax = plt.subplots(3)
+
+ax[0].plot(x_values, pytorch_wh_train_y, "r", label="wh Training Loss")
+ax[0].plot(x_values, pytorch_wh_val_y , "r--", label="wh Validation Loss")
+ax[0].set_title('PyTorch wh Training and Validation Losses')
+ax[0].set_xlabel('Number of Epochs')
+ax[0].set_ylabel('Training Loss')
+ax[0].legend(loc="upper right")
+
+ax[1].plot(x_values, pytorch_hm_train_y, "b", label="hm Training Loss")
+ax[1].plot(x_values, pytorch_hm_val_y, "b--", label="hm Validation Loss")
+ax[1].set_title('PyTorch hm Training and Validation Losses')
+ax[1].set_xlabel('Number of Epochs')
+ax[1].set_ylabel('Validation Loss')
+ax[1].legend(loc="upper right")
+
+ax[2].plot(x_values, pytorch_reg_train_y, "m", label="reg Training Loss")
+ax[2].plot(x_values, pytorch_reg_val_y, "m--", label="reg Validation Loss")
+ax[2].set_title('PyTorch reg Training and Validation Losses')
+ax[2].set_xlabel('Number of Epochs')
+ax[2].set_ylabel('Validation Loss')
+ax[2].legend(loc="upper right")
+
+fig.tight_layout()
+plt.show()
